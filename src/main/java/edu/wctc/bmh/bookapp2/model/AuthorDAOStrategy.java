@@ -8,21 +8,23 @@ import java.util.List;
  *
  * @author bhans_000
  */
-public interface IAuthorDAO {
+public interface AuthorDAOStrategy {
+    
+    public abstract void addAuthor(Author author) throws DataAccessException;
 
     /**
-     * Saves an Author as a new or updated record.
+     * Saves an Author as a updated record.
      * @param emp - the entity to be saved or updated
      * @throws DataAccessException - if sql or I/O errors
      */
-    public abstract void save(Author author) throws DataAccessException;
+    public abstract void saveAuthor(Author author) throws DataAccessException;
     
     /**
      * Delete an Author by entity.
      * @param employee - the entity to be deleted.
      * @throws DataAccessException  - if sql or I/O errors
      */
-    public abstract void deleteAuthor (Author author) throws DataAccessException;
+    public abstract void deleteAuthor (int author_id) throws DataAccessException;
     
     /**
      * Finds an Author entity by its id.

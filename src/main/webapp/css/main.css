@@ -1,0 +1,39 @@
+
+/* 
+    Created on : Sep 16, 2015, 4:15:12 PM
+    Author     : bhans_000
+*/
+
+body {
+    margin-top: 30px;
+}
+
+.right {
+    text-align: right;
+    clear: right;
+    margin: 10px;
+}
+
+.create {
+    float: right;
+}
+
+td a {
+    float: none;
+}
+
+iframe {
+    width: 100%;
+}
+
+iframe:focus { 
+    outline: none;
+}
+
+iframe[seamless] { 
+    display: block;
+}
+
+.modal-body {
+    margin: 10px;
+}

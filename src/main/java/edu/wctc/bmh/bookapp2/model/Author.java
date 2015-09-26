@@ -2,52 +2,58 @@
 
 package edu.wctc.bmh.bookapp2.model;
 
+import java.util.Date;
 import java.util.Objects;
 
-
-public class Author {
-
-    private int authorId;
-    private String firstName;
-    private String lastName;
+/**
+ * This is the domain object 
+ */
+public final class Author {
+    private Integer authorId;
+    private String authorName;
+    private Date dateAdded;
 
     public Author() {
     }
 
-    public Author(int authorId, String firstName, String lastName) {
+    public Author(Integer authorId) {
         this.authorId = authorId;
-        this.firstName = firstName;
-        this.lastName = lastName;
     }
 
-    public int getAuthorId() {
+    public Author(Integer authorId, String authorName, Date dateAdded) {
+        this.authorId = authorId;
+        this.authorName = authorName;
+        this.dateAdded = dateAdded;
+    }
+
+    public Integer getAuthorId() {
         return authorId;
     }
 
-    public void setAuthorId(int authorId) {
+    public void setAuthorId(Integer authorId) {
         this.authorId = authorId;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getAuthorName() {
+        return authorName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
     }
 
-    public String getLastName() {
-        return lastName;
+    public Date getDateAdded() {
+        return dateAdded;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setDateAdded(Date dateAdded) {
+        this.dateAdded = dateAdded;
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 37 * hash + this.authorId;
+        hash = 59 * hash + Objects.hashCode(this.authorId);
         return hash;
     }
 
@@ -60,13 +66,7 @@ public class Author {
             return false;
         }
         final Author other = (Author) obj;
-        if (this.authorId != other.authorId) {
-            return false;
-        }
-        if (!Objects.equals(this.firstName, other.firstName)) {
-            return false;
-        }
-        if (!Objects.equals(this.lastName, other.lastName)) {
+        if (!Objects.equals(this.authorId, other.authorId)) {
             return false;
         }
         return true;
@@ -74,7 +74,7 @@ public class Author {
 
     @Override
     public String toString() {
-        return "Author{" + "authorId=" + authorId + ", firstName=" + firstName + ", lastName=" + lastName  + '}' + super.toString();
+        return "Author{" + "authorId=" + authorId + ", authorName=" + authorName + ", dateAdded=" + dateAdded + '}';
     }
     
     
