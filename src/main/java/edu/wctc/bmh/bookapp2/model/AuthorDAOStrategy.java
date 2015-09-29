@@ -17,7 +17,7 @@ public interface AuthorDAOStrategy {
      * @param emp - the entity to be saved or updated
      * @throws DataAccessException - if sql or I/O errors
      */
-    public abstract void saveAuthor(Author author) throws DataAccessException;
+    public abstract void saveAuthor(int author_id, Author author) throws DataAccessException;
     
     /**
      * Delete an Author by entity.

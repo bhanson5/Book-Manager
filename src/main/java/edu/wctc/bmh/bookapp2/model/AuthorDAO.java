@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class AuthorDAO implements AuthorDAOStrategy {
 
@@ -46,9 +44,22 @@ public class AuthorDAO implements AuthorDAOStrategy {
     
 
     @Override
-    public void saveAuthor(Author author) throws DataAccessException {
+    public void saveAuthor(int author_id, Author author) throws DataAccessException {
+        Map<String, Object> record = new LinkedHashMap();
         
-
+        try {
+            db.openConnection(driverClassName, url, userName, password);
+            
+            record.put(ID_COLUMN_NAME, author.getAuthorId());
+            record.put(NAME_COLUMN_NAME, author.getAuthorName());
+            record.put(DATE_COLUMN_NAME, author.getDateAdded());
+            
+            db.updateRecord(TABLE_NAME, ID_COLUMN_NAME, author_id, record);
+            
+            db.closeConnection();
+        } catch (SQLException | IllegalArgumentException | ClassNotFoundException ex) {
+            throw new DataAccessException(ex);
+        }
     }
 
     @Override

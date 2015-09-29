@@ -13,6 +13,14 @@
     </head>
     <body>
         <h1>Edit Page</h1>
-        <p>Sorry not finished yet!</p>
+    <caption>Edit Page | not as pretty but works</caption>
+    <form method="GET" name="create" class="form form-horizontal" action="author?action=edit">
+                            
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id="name" placeholder="name" name="editname">
+                                </div>
+                                  
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                        </form>
     </body>
 </html>

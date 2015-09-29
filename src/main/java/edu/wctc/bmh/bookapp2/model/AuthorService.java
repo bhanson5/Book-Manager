@@ -28,5 +28,9 @@ public class AuthorService {
     public void deleteAuthor(int id) throws DataAccessException {
         dao.deleteAuthor(id);
     }
+   
+    public void saveAuthor(int id, Author author) throws DataAccessException {
+        dao.saveAuthor(id, author);
+    }
 
 }

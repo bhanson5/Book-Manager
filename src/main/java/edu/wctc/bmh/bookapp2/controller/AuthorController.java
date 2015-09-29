@@ -77,17 +77,6 @@ public class AuthorController extends HttpServlet {
              */
         if (action != null) {            
             switch (action) {
-
-                case UPDATE_ACTION:
-                    
-                    break;
-                case DELETE_ACTION:
-                    String id = request.getParameter("ID");
-                    authService.deleteAuthor(Integer.valueOf(id));
-                    destination = READ_PAGE;
-                    request.setAttribute("delMsg", DELETE_MSG);
-                    
-                    break;
                 case CREATE_ACTION:
                     Object fullname = request.getParameter("fullname");
 
@@ -99,6 +88,27 @@ public class AuthorController extends HttpServlet {
                     request.setAttribute("succMsg", CREATE_MSG + fullname);
 
                     break;
+
+                    
+                case UPDATE_ACTION:
+                    String id = request.getParameter("ID");
+                    Object editfullname = request.getParameter("editname");
+                    Date date = new Date();
+                    Author updateAuthor = new Author();
+                    updateAuthor.setAuthorId(Integer.valueOf(id));
+                    updateAuthor.setAuthorName((String) editfullname);
+                    updateAuthor.setDateAdded(date);
+                    authService.saveAuthor(Integer.valueOf(id), updateAuthor);
+                    
+                    break;
+                case DELETE_ACTION:
+                    String deleteId = request.getParameter("ID");
+                    authService.deleteAuthor(Integer.valueOf(deleteId));
+                    destination = READ_PAGE;
+                    request.setAttribute("delMsg", DELETE_MSG);
+                    
+                    break;
+                
                 default:
                     // no param identified in request, must be an error
                     request.setAttribute("errMsg", NO_PARAM_ERR_MSG);

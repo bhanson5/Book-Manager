@@ -198,15 +198,6 @@ public class MySQLDatabase implements DataAccessStrategy {
         return getRecordsFromQuery(mySQLQuery);
     }
 
-    private void executeQuery(final String mySQLQuery) throws SQLException {
-
-        try {
-            connection.createStatement().execute(mySQLQuery);
-
-        } catch (SQLException ex) {
-            throw new SQLException(ex);
-        }
-    }
 
     private List<Map<String, Object>> getRecordsFromQuery(final String mySQLQuery) throws SQLException {
 
@@ -269,7 +260,6 @@ public class MySQLDatabase implements DataAccessStrategy {
      * where_condition] [ORDER BY ...] [LIMIT row_count]
      *
      * @param tableName
-     * @param primaryKey
      * @throws IllegalArgumentException
      * @throws SQLException
      */
@@ -300,41 +290,43 @@ public class MySQLDatabase implements DataAccessStrategy {
      * col_name1={expr1|DEFAULT} [, col_name2={expr2|DEFAULT}] ... [WHERE
      * where_condition] [ORDER BY ...] [LIMIT row_count]
      *
-     * @param tableName
-     * @param primaryKey
-     * @param record
+     * @param tableName - String
+     * @param primaryKeyFieldName - String
+     * @param primaryKeyValue - Object
+     * @param record - Map<String, Object>
      * @throws IllegalArgumentException
      * @throws SQLException
      */
     @Override
-    public void updateRecord(String tableName, int primaryKey, Map<String, Object> record) throws IllegalArgumentException, SQLException {
+    public void updateRecord(String tableName, String primaryKeyFieldName, Object primaryKeyValue, Map<String, Object> record) throws IllegalArgumentException, SQLException {
         if (tableName == null || tableName.isEmpty()) {
             throw new IllegalArgumentException(IAE_TABLE_EMPTY);
-        } else if (primaryKey < 0) {
+        } else if (primaryKeyValue == null) {
             throw new IllegalArgumentException(IAE_INVALID_KEY);
-        } else if (record == null || record.isEmpty()) {
+        } else if (primaryKeyValue == null) {
             throw new IllegalArgumentException(IAE_RECORD_EMPTY);
         }
-        String columnPrimaryKeyName = null;
-        int columnLength = record.size();
-        for (String column : record.keySet()) {
-            if (column.contains(String.valueOf(primaryKey))) {
-                columnPrimaryKeyName = column;
-                break;
-            }
-        }
-
-        //Not finished
+        
         StringBuffer sql = new StringBuffer("UPDATE ");
         (sql.append(tableName)).append(" SET ");
 
+        for (String column : record.keySet()) {
+            (sql.append( column )).append(" = ?, ");
+        }
+        
         sql = new StringBuffer((sql.toString()).substring(0, (sql.toString()).lastIndexOf(", ")));
-        ((sql.append(" WHERE ")).append(primaryKey)).append(" = ?");
+        ((sql.append(" WHERE ")).append(primaryKeyFieldName)).append(" = ?");
         final String finalSQL = sql.toString();
 
         PreparedStatement statement = connection.prepareStatement(sql.toString());
-        statement.setObject(1, sql);
+        
+        for (int i = 1; i <= record.size(); i++) {
+            statement.setObject(i, record.values().toArray()[i-1]);
+        }
+        
+        statement.setObject(record.size() + 1, primaryKeyValue);
 
+        statement.executeUpdate();
     }
 
 }

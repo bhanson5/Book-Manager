@@ -105,7 +105,7 @@ public interface DataAccessStrategy {
      * @throws IllegalArgumentException
      * @throws SQLException
      */
-    public abstract void updateRecord (final String tableName, final int primaryKey, final Map<String, Object> record) throws IllegalArgumentException, SQLException;
+    public abstract void updateRecord (String tableName, String primaryKeyFieldName, Object primaryKeyValue, Map<String, Object> record) throws IllegalArgumentException, SQLException;
     
     
 }
