@@ -50,7 +50,15 @@ public class AuthorController extends HttpServlet {
 
         String destination = READ_PAGE;
         String action = request.getParameter(ACTION_PARAM);
+
+        String driverClass = this.getServletContext().getInitParameter("driverClass");
+        String url = getServletConfig().getInitParameter("url");
+        String userName = getServletConfig().getInitParameter("userName");
+        String password = getServletConfig().getInitParameter("password");
+        String dbClassName = this.getServletContext().getInitParameter("dbStrategy");
+        String daoClassName = this.getServletConfig().getInitParameter("authorDao");
         
+
 
         /*
          For now we are hard-coding the strategy objects into this
@@ -59,11 +67,13 @@ public class AuthorController extends HttpServlet {
          which is not very efficient. In the future we'll learn how to use
          a connection pool to improve this.
          */
-        DataAccessStrategy db = new MySQLDatabase();
-        AuthorDAOStrategy authDao = new AuthorDAO(db, "com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin");
-        AuthorService authService = new AuthorService(authDao);
-
         try {
+            Class dbClass = Class.forName(dbClassName);
+            DataAccessStrategy db = (DataAccessStrategy) dbClass.newInstance();
+
+            AuthorDAOStrategy authDao = new AuthorDAO(db, driverClass, url, userName, password);
+           
+            AuthorService authService = new AuthorService(authDao);
             /*
              Here's what the connection pool version looks like.
              */
@@ -75,46 +85,45 @@ public class AuthorController extends HttpServlet {
              Determine what action to take based on a passed in QueryString
              Parameter
              */
-        if (action != null) {            
-            switch (action) {
-                case CREATE_ACTION:
-                    Object fullname = request.getParameter("fullname");
+            if (action != null) {
+                switch (action) {
+                    case CREATE_ACTION:
+                        Object fullname = request.getParameter("fullname");
 
-                    Author author = new Author();
-                    author.setAuthorName((String) fullname);
-                    author.setDateAdded(new Date());
-                    authService.addAuthor(author);
-                    destination = READ_PAGE;
-                    request.setAttribute("succMsg", CREATE_MSG + fullname);
+                        Author author = new Author();
+                        author.setAuthorName((String) fullname);
+                        author.setDateAdded(new Date());
+                        authService.addAuthor(author);
+                        destination = READ_PAGE;
+                        request.setAttribute("succMsg", CREATE_MSG + fullname);
 
-                    break;
+                        break;
 
-                    
-                case UPDATE_ACTION:
-                    String id = request.getParameter("ID");
-                    Object editfullname = request.getParameter("editname");
-                    Date date = new Date();
-                    Author updateAuthor = new Author();
-                    updateAuthor.setAuthorId(Integer.valueOf(id));
-                    updateAuthor.setAuthorName((String) editfullname);
-                    updateAuthor.setDateAdded(date);
-                    authService.saveAuthor(Integer.valueOf(id), updateAuthor);
-                    
-                    break;
-                case DELETE_ACTION:
-                    String deleteId = request.getParameter("ID");
-                    authService.deleteAuthor(Integer.valueOf(deleteId));
-                    destination = READ_PAGE;
-                    request.setAttribute("delMsg", DELETE_MSG);
-                    
-                    break;
-                
-                default:
-                    // no param identified in request, must be an error
-                    request.setAttribute("errMsg", NO_PARAM_ERR_MSG);
-                    destination = READ_PAGE;
+                    case UPDATE_ACTION:
+                        String id = request.getParameter("ID");
+                        Object editfullname = request.getParameter("editname");
+                        Date date = new Date();
+                        Author updateAuthor = new Author();
+                        updateAuthor.setAuthorId(Integer.valueOf(id));
+                        updateAuthor.setAuthorName((String) editfullname);
+                        updateAuthor.setDateAdded(date);
+                        authService.saveAuthor(Integer.valueOf(id), updateAuthor);
+
+                        break;
+                    case DELETE_ACTION:
+                        String deleteId = request.getParameter("ID");
+                        authService.deleteAuthor(Integer.valueOf(deleteId));
+                        destination = READ_PAGE;
+                        request.setAttribute("delMsg", DELETE_MSG);
+
+                        break;
+
+                    default:
+                        // no param identified in request, must be an error
+                        request.setAttribute("errMsg", NO_PARAM_ERR_MSG);
+                        destination = READ_PAGE;
+                }
             }
-        }
 
             List<Author> authors = null;
             authors = authService.getAllAuthors();
@@ -125,11 +134,14 @@ public class AuthorController extends HttpServlet {
         }
 
         // Forward to destination page
-        RequestDispatcher dispatcher
-                = getServletContext().getRequestDispatcher(destination);
+        RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(destination);
         dispatcher.forward(request, response);
+        
+        
+        
     }
 
+    
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -167,5 +179,12 @@ public class AuthorController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }
+
+    @Override
+    public void init() throws ServletException {
+        super.init(); 
+    }
+
+    
 
 }

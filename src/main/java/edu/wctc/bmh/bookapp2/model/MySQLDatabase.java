@@ -308,7 +308,7 @@ public class MySQLDatabase implements DataAccessStrategy {
         }
         
         StringBuffer sql = new StringBuffer("UPDATE ");
-        (sql.append(tableName)).append(" SET ");
+        (sql.append(tableName)).append(" SET "); 
 
         for (String column : record.keySet()) {
             (sql.append( column )).append(" = ?, ");
