@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  *
- * @author bhans_000
+ * @author Benjamin Hanson
  */
 public interface AuthorDAOStrategy {
     
@@ -14,14 +14,15 @@ public interface AuthorDAOStrategy {
 
     /**
      * Saves an Author as a updated record.
-     * @param emp - the entity to be saved or updated
+     * @param author_id
+     * @param author
      * @throws DataAccessException - if sql or I/O errors
      */
     public abstract void saveAuthor(int author_id, Author author) throws DataAccessException;
     
     /**
      * Delete an Author by entity.
-     * @param employee - the entity to be deleted.
+     * @param author_id
      * @throws DataAccessException  - if sql or I/O errors
      */
     public abstract void deleteAuthor (int author_id) throws DataAccessException;

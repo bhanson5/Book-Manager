@@ -27,8 +27,6 @@ public class AuthorDAO implements AuthorDAOStrategy {
         this.password = password;
     }
 
-    
-    
     public final DataAccessStrategy getDb() {
         return db;
     }
@@ -41,8 +39,6 @@ public class AuthorDAO implements AuthorDAOStrategy {
         setDb(db);
     }
     
-    
-
     @Override
     public void saveAuthor(int author_id, Author author) throws DataAccessException {
         Map<String, Object> record = new LinkedHashMap();

@@ -2,7 +2,6 @@ package edu.wctc.bmh.bookapp2.model;
 
 /**
  *
- * @author Instlogin
  */
 public class DataAccessException extends Exception {
 

@@ -5,10 +5,12 @@ import edu.wctc.bmh.bookapp2.model.AuthorDAO;
 import edu.wctc.bmh.bookapp2.model.AuthorService;
 import edu.wctc.bmh.bookapp2.model.DataAccessStrategy;
 import edu.wctc.bmh.bookapp2.model.AuthorDAOStrategy;
-import edu.wctc.bmh.bookapp2.model.MySQLDatabase;
+import edu.wctc.bmh.bookapp2.model.DataAccessException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * The main controller for author-related activities
  *
- * @author jlombardo
  */
 @WebServlet(name = "AuthorController", urlPatterns = {"/author"})
 public class AuthorController extends HttpServlet {
@@ -29,11 +30,22 @@ public class AuthorController extends HttpServlet {
     private static final String CREATE_MSG = "Well done! You've successfully created a new author. ";
     private static final String DELETE_MSG = "Just so you know, you've just deleted a author!";
     private static final String READ_PAGE = "/index.jsp";
-    private static final String UPDATE_PAGE = "/Edit.jsp";
     private static final String CREATE_ACTION = "create";
     private static final String UPDATE_ACTION = "update";
     private static final String DELETE_ACTION = "delete";
     private static final String ACTION_PARAM = "action";
+
+    private String driverClass;
+    private String url;
+    private String userName;
+    private String password;
+    private String dbStrategyClassName;
+    private String daoClassName;
+    private String dbClassName;
+    private String destination;
+    private String action;
+    private AuthorService authService;
+    private AuthorDAOStrategy authDao;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,104 +56,90 @@ public class AuthorController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 
-        String destination = READ_PAGE;
-        String action = request.getParameter(ACTION_PARAM);
+        destination = READ_PAGE;
+        action = request.getParameter(ACTION_PARAM);
 
-        String driverClass = this.getServletContext().getInitParameter("driverClass");
-        String url = getServletConfig().getInitParameter("url");
-        String userName = getServletConfig().getInitParameter("userName");
-        String password = getServletConfig().getInitParameter("password");
-        String dbClassName = this.getServletContext().getInitParameter("dbStrategy");
-        String daoClassName = this.getServletConfig().getInitParameter("authorDao");
-        
-
-
-        /*
-         For now we are hard-coding the strategy objects into this
-         controller. In the future we'll auto inject them from a config
-         file. Also, the DAO opens/closes a connection on each method call,
-         which is not very efficient. In the future we'll learn how to use
-         a connection pool to improve this.
-         */
         try {
+
             Class dbClass = Class.forName(dbClassName);
             DataAccessStrategy db = (DataAccessStrategy) dbClass.newInstance();
 
-            AuthorDAOStrategy authDao = new AuthorDAO(db, driverClass, url, userName, password);
-           
-            AuthorService authService = new AuthorService(authDao);
-            /*
-             Here's what the connection pool version looks like.
-             */
-//            Context ctx = new InitialContext();
-//            DataSource ds = (DataSource)ctx.lookup("jdbc/book");
-//            AuthorDaoStrategy authDao = new ConnPoolAuthorDao(ds, new MySqlDbStrategy());
-//            AuthorService authService = new AuthorService(authDao);
-            /*
-             Determine what action to take based on a passed in QueryString
-             Parameter
-             */
+            authDao = new AuthorDAO(db, driverClass, url, userName, password);
+
+            authService = new AuthorService(authDao);
+
             if (action != null) {
                 switch (action) {
                     case CREATE_ACTION:
-                        Object fullname = request.getParameter("fullname");
-
-                        Author author = new Author();
-                        author.setAuthorName((String) fullname);
-                        author.setDateAdded(new Date());
-                        authService.addAuthor(author);
-                        destination = READ_PAGE;
-                        request.setAttribute("succMsg", CREATE_MSG + fullname);
-
+                        create(request);
                         break;
-
                     case UPDATE_ACTION:
-                        String id = request.getParameter("ID");
-                        Object editfullname = request.getParameter("editname");
-                        Date date = new Date();
-                        Author updateAuthor = new Author();
-                        updateAuthor.setAuthorId(Integer.valueOf(id));
-                        updateAuthor.setAuthorName((String) editfullname);
-                        updateAuthor.setDateAdded(date);
-                        authService.saveAuthor(Integer.valueOf(id), updateAuthor);
-
+                        update(request);
                         break;
                     case DELETE_ACTION:
-                        String deleteId = request.getParameter("ID");
-                        authService.deleteAuthor(Integer.valueOf(deleteId));
-                        destination = READ_PAGE;
-                        request.setAttribute("delMsg", DELETE_MSG);
-
+                        delete(request);
                         break;
 
                     default:
-                        // no param identified in request, must be an error
                         request.setAttribute("errMsg", NO_PARAM_ERR_MSG);
                         destination = READ_PAGE;
                 }
             }
+            
+            read(request);
 
-            List<Author> authors = null;
-            authors = authService.getAllAuthors();
-            request.setAttribute("authors", authors);
-
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             request.setAttribute("errMsg", e.getCause().getMessage());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+            Logger.getLogger(AuthorController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        // Forward to destination page
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(destination);
         dispatcher.forward(request, response);
-        
-        
-        
+
     }
 
-    
+    private void read(final HttpServletRequest request) throws DataAccessException {
+        List<Author> authors = null;
+        authors = authService.getAllAuthors();
+        request.setAttribute("authors", authors);
+    }
+
+    private void create(final HttpServletRequest request) throws DataAccessException {
+
+        Object fullname = request.getParameter("fullname");
+        Author author = new Author();
+        author.setAuthorName((String) fullname);
+        author.setDateAdded(new Date());
+        authService.addAuthor(author);
+        destination = READ_PAGE;
+        request.setAttribute("succMsg", CREATE_MSG + fullname);
+
+    }
+
+    private void update(final HttpServletRequest request) throws DataAccessException {
+
+        String id = request.getParameter("ID");
+        Object editfullname = request.getParameter("editname");
+        Date date = new Date();
+        Author updateAuthor = new Author();
+        updateAuthor.setAuthorId(Integer.valueOf(id));
+        updateAuthor.setAuthorName((String) editfullname);
+        updateAuthor.setDateAdded(date);
+        authService.saveAuthor(Integer.valueOf(id), updateAuthor);
+    }
+
+    private void delete(final HttpServletRequest request) throws DataAccessException {
+
+        String deleteId = request.getParameter("ID");
+        authService.deleteAuthor(Integer.valueOf(deleteId));
+        destination = READ_PAGE;
+        request.setAttribute("delMsg", DELETE_MSG);
+    }
+
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -151,8 +149,7 @@ public class AuthorController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -165,8 +162,7 @@ public class AuthorController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         processRequest(request, response);
     }
 
@@ -180,11 +176,19 @@ public class AuthorController extends HttpServlet {
         return "Short description";
     }
 
+    /**
+     *  Initialize the servlet
+     * 
+     * @throws ServletException
+     */
     @Override
     public void init() throws ServletException {
-        super.init(); 
+        driverClass = this.getServletContext().getInitParameter("driverClass");
+        url = getServletConfig().getInitParameter("url");
+        userName = getServletConfig().getInitParameter("userName");
+        password = getServletConfig().getInitParameter("password");
+        dbClassName = this.getServletContext().getInitParameter("dbStrategy");
+        daoClassName = this.getServletConfig().getInitParameter("authorDao");
     }
-
-    
 
 }

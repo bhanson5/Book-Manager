@@ -102,30 +102,6 @@ public class MySQLDatabase implements DataAccessStrategy {
             throw new IllegalArgumentException(IAE_RECORD_EMPTY);
         }
 
-//        String mySQLQuery = "INSERT INTO " + tableName + " (";
-//
-//        for (String column : record.keySet()) {
-//
-//            
-//            if (column.equals(record.keySet().toArray()[0])) {
-//                mySQLQuery += "`" + column + "`";
-//            } else {
-//                mySQLQuery += ", `" + column + "`";
-//            }
-//        }
-//        mySQLQuery += ") VALUES (";
-//
-//        for (Object value : record.values()) {
-//
-//            if (value.equals(record.values().toArray()[0])) {
-//                mySQLQuery += "'" + value + "'";
-//            } else {
-//                mySQLQuery += ", '" + value + "'";
-//            }
-//        }
-//        mySQLQuery += ");";
-//
-//        executeQuery(mySQLQuery);
         
         StringBuffer sql = new StringBuffer("INSERT INTO ");
         (sql.append(tableName)).append(" (");

@@ -100,7 +100,8 @@ public interface DataAccessStrategy {
      *  Updates a record from the database table with a primary key value
      * 
      * @param tableName
-     * @param primaryKey
+     * @param primaryKeyFieldName
+     * @param primaryKeyValue
      * @param record
      * @throws IllegalArgumentException
      * @throws SQLException
