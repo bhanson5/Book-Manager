@@ -15,8 +15,7 @@
         <title>Author Manager</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link href="css/sidebar.css" rel="stylesheet" type="text/css"/>
         <link href="css/main.css" rel="stylesheet" type="text/css"/>
     </head>
     <body>
@@ -27,15 +26,15 @@
                 </ul>
                 <ul class="nav nav-pills nav-stacked">
 
-                    <li class="active"><a href="#">Authors</a></li>
-                    <li class=""><a href="#">Books</a></li>
+                    <li class="active"><a href="author">Authors</a></li>
+                    <li class=""><a href="book">Books</a></li>
                 </ul>
-
+            </div>
 
             </div>
 
             <div class="col-sm-9 col-md-10  main">
-                <div class="panel panel-primary">
+                <div class="panel panel-success">
                     <div class="panel-heading">
                         <caption><span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true"></span> Author Manager</caption>
                         <div class="btn-group right create" role="group" aria-label=".."> 

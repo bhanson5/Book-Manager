@@ -35,10 +35,6 @@
             <param-name>password</param-name>
             <param-value>admin</param-value>
         </init-param>
-        <init-param>
-            <param-name>authorDao</param-name>
-            <param-value>edu.wctc.bmh.bookapp2.model.AuthorDAO</param-value>
-        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
     
