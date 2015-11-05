@@ -2,7 +2,7 @@
 
 package edu.wctc.bmh.bookapp2.model.service;
 
-import edu.wctc.bmh.bookapp2.model.entity.Author;
+import edu.wctc.bmh.bookapp2.entity.Author;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

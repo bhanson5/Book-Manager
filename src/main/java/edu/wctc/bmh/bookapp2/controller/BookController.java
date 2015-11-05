@@ -1,9 +1,8 @@
 package edu.wctc.bmh.bookapp2.controller;
 
-import edu.wctc.bmh.bookapp2.entity.Author;
-import edu.wctc.bmh.bookapp2.service.AuthorService;
+import edu.wctc.bmh.bookapp2.entity.Book;
+import edu.wctc.bmh.bookapp2.service.BookService;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -16,20 +15,22 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
- * The main controller for author-related activities
+ * The main controller for book-related activities
  *
  */
-@WebServlet(name = "AuthorController", urlPatterns = {"/author"})
-public class AuthorController extends HttpServlet {
+@WebServlet(name = "BookController", urlPatterns = {"/book"})
+public class BookController extends HttpServlet {
 
     private static final String NO_PARAM_ERR_MSG = "No request parameter identified";
-    /** Message for successfully creating a new author. */
-    private static final String CREATE_MSG = "Well done! You've successfully created a new author. ";
-    private static final String DELETE_MSG = "Just so you know, you've just deleted a author!";
+    /**
+     * Message for successfully creating a new book.
+     */
+    private static final String CREATE_MSG = "Well done! You've successfully created a new book. ";
+    private static final String DELETE_MSG = "Just so you know, you've just deleted a book!";
     private static final String READ_PAGE = "/index.jsp";
-    private static final String LIST_PAGE = "/Author/List.jsp";
-    private static final String EDIT_PAGE = "/Author/Edit.jsp";
-    private static final String CREATE_PAGE = "/Author/Create.jsp";
+    private static final String LIST_PAGE = "/Book/List.jsp";
+    private static final String EDIT_PAGE = "/Book/Edit.jsp";
+    private static final String CREATE_PAGE = "/Book/Create.jsp";
     private static final String CREATE_ACTION = "create";
     private static final String UPDATE_ACTION = "update";
     private static final String DELETE_ACTION = "delete";
@@ -37,7 +38,7 @@ public class AuthorController extends HttpServlet {
 
     private String destination;
     private String action;
-    private AuthorService authService;
+    private BookService bookService;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -54,19 +55,18 @@ public class AuthorController extends HttpServlet {
         destination = READ_PAGE;
         action = request.getParameter(ACTION_PARAM);
 
-        if (authService == null) {
+        if (bookService == null) {
             ServletContext sctx = getServletContext();
-        WebApplicationContext ctx
-                = WebApplicationContextUtils.getWebApplicationContext(sctx);
-        authService = (AuthorService) ctx.getBean("authorService");
+            WebApplicationContext ctx
+                    = WebApplicationContextUtils.getWebApplicationContext(sctx);
+            bookService = (BookService) ctx.getBean("bookService");
         }
         
         request.setAttribute("listPage", LIST_PAGE);
         request.setAttribute("editPage", EDIT_PAGE);
         request.setAttribute("createPage", CREATE_PAGE);
-        
-        try {
 
+        try {
 
             if (action != null) {
                 switch (action) {
@@ -85,52 +85,55 @@ public class AuthorController extends HttpServlet {
                         destination = READ_PAGE;
                 }
             }
-            
+
             read(request);
 
         } catch (Exception e) {
             request.setAttribute("errMsg", e.getCause().getMessage());
         }
 
-        
         RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(destination);
         dispatcher.forward(request, response);
 
     }
 
     private void read(final HttpServletRequest request) throws Exception {
-        List<Author> authors = authService.findAll();
-        request.setAttribute("authors", authors);
+        List<Book> books = bookService.findAll();
+        request.setAttribute("books", books);
     }
 
     private void create(final HttpServletRequest request) throws Exception {
 
-        Object fullname = request.getParameter("fullname");
-        Author author = new Author();
-        author.setAuthorName((String) fullname);
-        author.setDateAdded(new Date());
-        authService.create(author);
+        String isbn = request.getParameter("isbn");
+        String title = request.getParameter("title");
+        Book book = new Book();
+        book.setIsbn(isbn);
+        book.setTitle(title);
+
+        bookService.create(book);
         destination = READ_PAGE;
-        request.setAttribute("succMsg", CREATE_MSG + fullname);
+        request.setAttribute("succMsg", CREATE_MSG + book.getTitle());
 
     }
 
     private void update(final HttpServletRequest request) throws Exception {
 
-        String id = request.getParameter("ID");
-        Object editfullname = request.getParameter("editname");
-        Date date = new Date();
-        Author updateAuthor = new Author();
-        updateAuthor.setAuthorId(Integer.valueOf(id));
-        updateAuthor.setAuthorName((String) editfullname);
-        updateAuthor.setDateAdded(date);
-        authService.edit(updateAuthor);
+        Integer id = Integer.parseInt(request.getParameter("ID"));
+        String isbn = request.getParameter("isbn");
+        String title = request.getParameter("title");
+
+        Book book = new Book();
+        book.setBookId(id);
+        book.setIsbn(isbn);
+        book.setTitle(title);
+
+        bookService.edit(book);
     }
 
     private void delete(final HttpServletRequest request) throws Exception {
 
         String deleteId = request.getParameter("ID");
-        authService.remove(authService.findById(deleteId));
+        bookService.remove(bookService.findById(deleteId));
         destination = READ_PAGE;
         request.setAttribute("delMsg", DELETE_MSG);
     }
@@ -160,15 +163,4 @@ public class AuthorController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         processRequest(request, response);
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }
-
 }

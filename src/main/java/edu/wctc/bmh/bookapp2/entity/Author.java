@@ -1,6 +1,6 @@
 
 
-package edu.wctc.bmh.bookapp2.model.entity;
+package edu.wctc.bmh.bookapp2.entity;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -44,7 +44,7 @@ public class Author implements Serializable {
     @Column(name = "date_added")
     @Temporal(TemporalType.DATE)
     private Date dateAdded;
-    @OneToMany(mappedBy = "authorId", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "authorId", fetch = FetchType.EAGER)
     private Set<Book> bookSet;
 
     public Author() {

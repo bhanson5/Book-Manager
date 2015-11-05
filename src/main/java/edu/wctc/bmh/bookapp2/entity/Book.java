@@ -1,6 +1,6 @@
 
 
-package edu.wctc.bmh.bookapp2.model.entity;
+package edu.wctc.bmh.bookapp2.entity;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
