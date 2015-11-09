@@ -9,15 +9,16 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html>
     <head>
         <title>Manager</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-        <link href="css/sidebar.css" rel="stylesheet" type="text/css"/>
-        <link href="css/main.css" rel="stylesheet" type="text/css"/>
+        <link href="resources/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="resources/css/sidebar.css" rel="stylesheet" type="text/css"/>
+        <link href="resources/css/main.css" rel="stylesheet" type="text/css"/>
     </head>
     <body>
         <div class="container">
@@ -27,7 +28,7 @@
                 </ul>
                 <ul class="nav nav-pills nav-stacked">
 
-                    <li class="active"><a href="author">Authors</a></li>
+                    <li class="active"><a href="AuthorController">Authors</a></li>
                     <li class=""><a href="book">Books</a></li>
                 </ul>
             </div>
@@ -38,6 +39,35 @@
                 
                 <!--Entity List -->            
             <jsp:include page = "${listPage}" />
+            <div class="panel panel-success">
+    <div class="panel-heading">
+        <caption><span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true"></span> Author Manager</caption>
+        <div class="btn-group right create" role="group" aria-label=".."> 
+            <button data-toggle="modal" data-target="#createModal" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Create</button>
+            <button onclick="window.location.href = 'AuthorController'" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh</button>
+        </div>
+    </div>
+
+
+    <table class="table table-condensed  ">
+        <thead>
+            <tr class="primary">
+                <th>#</th><th>Name</th><th>Dated added</th><th></th>
+            </tr>
+        </thead>    
+        <tbody>
+        <c:forEach var="a" items="${authors}" varStatus="rowCount">
+            <tr>
+                <th class="row">${a.authorId}</td>
+                <td>${a.authorName}</td>
+                <td>${a.dateAdded}</td>
+                <td class="right"><a data-toggle="modal" data-target="#editModal" data-id="${a.authorId}" class="editDialog" href="#Edit">Edit</a> | <a href="AuthorJSP?action=delete&ID=${a.authorId}">Delete</a></td>
+            </tr>
+        </c:forEach>
+        </tbody>
+    </table>
+
+</div>
 
                 <c:if test="${not empty errMsg}">
                     <div class="alert alert-danger" role="alert">
@@ -72,8 +102,8 @@
 
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script src="Script/bootstrap.min.js" type="text/javascript"></script>
-        <script src="Script/main.js" type="text/javascript"></script>
+        <script src="resources/script/bootstrap.min.js" type="text/javascript"></script>
+        <script src="resources/script/main.js" type="text/javascript"></script>
     </body>
 </html>
 
