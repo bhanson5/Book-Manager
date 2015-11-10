@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,14 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
  * to perform dependency injection, and special annotations for transactions.
  * It also uses SLF4j to provide logging features.
  * 
- * @author jlombardo
  */
 @Repository("bookService")
 @Transactional(readOnly = true)
 public class BookService {
     private transient final Logger LOG = LoggerFactory.getLogger(BookService.class);
     
-    @Inject
+    @Autowired
     private BookRepository bookRepo;
 
     public BookService() {

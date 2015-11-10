@@ -8,11 +8,11 @@
 
 <div class="col-sm-3 col-md-2 sidebar">
     <ul class="nav nav-sidebar">
-        <li><p class="navbar-brand">Book Dashboard</p></li>
+        <li><p class="navbar-brand">Dashboard</p></li>
     </ul>
     <ul class="nav nav-pills nav-stacked">
-        <li><a href="author">Author</a></li>
-        <li><a href='book'>Book</a></li>
+        <li><a href="AuthorController">Author</a></li>
+        <li><a href='BookController'>Book</a></li>
     </ul>
 
 

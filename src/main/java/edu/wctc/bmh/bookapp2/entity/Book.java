@@ -4,6 +4,7 @@ package edu.wctc.bmh.bookapp2.entity;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -41,7 +42,7 @@ public class Book implements Serializable {
     @Column(name = "isbn")
     private String isbn;
     @JoinColumn(name = "author_id", referencedColumnName = "author_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Author authorId;
 
     public Book() {

@@ -28,9 +28,8 @@ public class AuthorController extends HttpServlet {
     private static final String CREATE_MSG = "Well done! You've successfully created a new author. ";
     private static final String DELETE_MSG = "Just so you know, you've just deleted a author!";
     private static final String READ_PAGE = "/index.jsp";
-    private static final String LIST_PAGE = "/Author/List.jsp";
-    private static final String EDIT_PAGE = "/Author/Edit.jsp";
-    private static final String CREATE_PAGE = "/Author/Create.jsp";
+    private static final String EDIT_PAGE = "/AuthorEdit.jsp";
+    private static final String CREATE_PAGE = "/AuthorCreate.jsp";
     private static final String CREATE_ACTION = "create";
     private static final String UPDATE_ACTION = "update";
     private static final String DELETE_ACTION = "delete";
@@ -38,7 +37,6 @@ public class AuthorController extends HttpServlet {
 
     private String destination;
     private String action;
-    @Autowired
     private AuthorService authService;
 
     /**
@@ -63,7 +61,6 @@ public class AuthorController extends HttpServlet {
         authService = (AuthorService) ctx.getBean("authorService");
         }
         
-        request.setAttribute("listPage", LIST_PAGE);
         request.setAttribute("editPage", EDIT_PAGE);
         request.setAttribute("createPage", CREATE_PAGE);
         

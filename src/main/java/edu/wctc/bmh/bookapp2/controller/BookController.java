@@ -100,6 +100,7 @@ public class BookController extends HttpServlet {
     private void read(final HttpServletRequest request) throws Exception {
         List<Book> books = bookService.findAll();
         request.setAttribute("books", books);
+        
     }
 
     private void create(final HttpServletRequest request) throws Exception {

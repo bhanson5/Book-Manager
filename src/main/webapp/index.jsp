@@ -22,88 +22,125 @@
     </head>
     <body>
         <div class="container">
-            <div class="col-sm-3 col-md-2 sidebar">
-                <ul class="nav nav-sidebar">
-                    <li><p class="navbar-brand">Manager</p></li>
-                </ul>
-                <ul class="nav nav-pills nav-stacked">
-
-                    <li class="active"><a href="AuthorController">Authors</a></li>
-                    <li class=""><a href="book">Books</a></li>
-                </ul>
-            </div>
-
-            </div>
-
-            <div class="col-sm-9 col-md-10 col-md-offset-2 main">
-                
-                <!--Entity List -->            
-            <jsp:include page = "${listPage}" />
-            <div class="panel panel-success">
-    <div class="panel-heading">
-        <caption><span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true"></span> Author Manager</caption>
-        <div class="btn-group right create" role="group" aria-label=".."> 
-            <button data-toggle="modal" data-target="#createModal" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Create</button>
-            <button onclick="window.location.href = 'AuthorController'" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh</button>
+            <jsp:include page = "sidebar.jsp" />
         </div>
-    </div>
+
+        <div class="col-sm-9 col-md-10 col-md-offset-2 main">
+
+            <c:if test="${not empty authors}">
+
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <caption><span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true"></span> Author Manager</caption>
+                        <div class="btn-group right create" role="group" aria-label=".."> 
+                            <sec:authorize access="hasAnyRole('ROLE_MGR')">
+                                <button data-toggle="modal" data-target="#createModal" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Create</button>
+                            </sec:authorize>
+                            <button onclick="window.location.href = 'author'" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh</button>
+                        </div>
+                    </div>
 
 
-    <table class="table table-condensed  ">
-        <thead>
-            <tr class="primary">
-                <th>#</th><th>Name</th><th>Dated added</th><th></th>
-            </tr>
-        </thead>    
-        <tbody>
-        <c:forEach var="a" items="${authors}" varStatus="rowCount">
-            <tr>
-                <th class="row">${a.authorId}</td>
-                <td>${a.authorName}</td>
-                <td>${a.dateAdded}</td>
-                <td class="right"><a data-toggle="modal" data-target="#editModal" data-id="${a.authorId}" class="editDialog" href="#Edit">Edit</a> | <a href="AuthorJSP?action=delete&ID=${a.authorId}">Delete</a></td>
-            </tr>
-        </c:forEach>
-        </tbody>
-    </table>
+                    <table class="table table-condensed  ">
+                        <thead>
+                            <tr class="primary">
+                                <th>#</th><th>Name</th><th>Dated added</th><th></th>
+                            </tr>
+                        </thead>    
+                        <tbody>
+                            <c:forEach var="a" items="${authors}" varStatus="rowCount">
+                                <tr>
+                                    <th class="row">${a.authorId}</td>
+                                    <td>${a.authorName}</td>
+                                    <td>${a.dateAdded}</td>
+                                    <sec:authorize access="hasAnyRole('ROLE_MGR')">
+                                        <td class="right"><a data-toggle="modal" data-target="#editModal" data-id="${a.authorId}" class="editDialog" href="#Edit">Edit</a> | <a href="author?action=delete&ID=${a.authorId}">Delete</a></td>
+                                    </sec:authorize>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
 
-</div>
+                </div>
+            </c:if>
 
-                <c:if test="${not empty errMsg}">
-                    <div class="alert alert-danger" role="alert">
-                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                        ${errMsg}
-                    </div>                
-                </c:if>
+            <c:if test="${not empty books}">
 
-                <c:if test="${not empty succMsg}">
-                    <div class="alert alert-success" role="alert">
-                        <span class="glyphicon glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-                        ${succMsg}
-                    </div>                
-                </c:if>
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <caption><span class="glyphicon glyphicon glyphicon-edit" aria-hidden="true"></span> Book Manager</caption>
+                        <div class="btn-group right create" role="group" aria-label=".."> 
+                            <sec:authorize access="hasAnyRole('ROLE_MGR')">
+                                <button data-toggle="modal" data-target="#createModal" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Create</button>
+                            </sec:authorize>
+                            <button onclick="window.location.href = 'BookController'" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refresh</button>
+                        </div>
+                    </div>
 
-                <c:if test="${not empty delMsg}">
-                    <div class="alert alert-info" role="alert">
-                        <span class="glyphicon glyphicon glyphicon-info-sign" aria-hidden="true"></span>
-                        ${delMsg}
-                    </div>                
-                </c:if>
 
-            </div>
+                    <table class="table table-condensed  ">
+                        <thead>
+                            <tr class="primary">
+                                <th>ID</th><th>Title</th><th>ISBN</th><th>Author</th><th></th>
+                            </tr>
+                        </thead>    
+                        <tbody>
+                            <c:forEach var="a" items="${books}" varStatus="rowCount">
+                                <tr>
+                                    <th class="row">${a.bookId}</td>
+                                    <td>${a.title}</td>
+                                    <td>${a.isbn}</td>
+                                    <td>${a.authorId.authorName}</td>
+                                    <sec:authorize access="hasAnyRole('ROLE_MGR')">
+                                        <td class="right"><a data-toggle="modal" data-target="#editModal" data-id="${a.bookId}" class="editDialog" href="#Edit">Edit</a> | <a href="BookController?action=delete&ID=${a.authorId}">Delete</a></td>
+                                    </sec:authorize>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
 
-            <!-- Create Modal -->
+                </div>
+            </c:if>
+
+
+
+            <c:if test="${not empty errMsg}">
+                <div class="alert alert-danger" role="alert">
+                    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                    ${errMsg}
+                </div>                
+            </c:if>
+
+            <c:if test="${not empty succMsg}">
+                <div class="alert alert-success" role="alert">
+                    <span class="glyphicon glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+                    ${succMsg}
+                </div>                
+            </c:if>
+
+            <c:if test="${not empty delMsg}">
+                <div class="alert alert-info" role="alert">
+                    <span class="glyphicon glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                    ${delMsg}
+                </div>                
+            </c:if>
+
+        </div>
+
+        <!-- Create Modal -->
+        <sec:authorize access="hasAnyRole('ROLE_MGR')">
             <jsp:include page = "${createPage}" />
 
             <!-- Edit Modal -->            
             <jsp:include page = "${editPage}" />
+        </sec:authorize>
 
-        </div>
+    </div>
 
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <script src="resources/script/bootstrap.min.js" type="text/javascript"></script>
-        <script src="resources/script/main.js" type="text/javascript"></script>
-    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="resources/script/bootstrap.min.js" type="text/javascript"></script>
+    <script src="resources/script/main.js" type="text/javascript"></script>
+</body>
 </html>
 

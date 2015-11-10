@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
  * to perform dependency injection, and special annotations for transactions.
  * It also uses SLF4j to provide logging features.
  * 
- * @author jlombardo
  */
 @Repository("authorService")
 @Transactional(readOnly = true)
